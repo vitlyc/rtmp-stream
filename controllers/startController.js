@@ -8,70 +8,73 @@ const {
   getStreamProcess,
   getYtProcess,
 } = require('../utils/processManager')
-const { start } = require('repl')
 
-let streamLogoProcess = null
-let streamProcess = getStreamProcess()
-let ytProcess = getYtProcess()
+let streamProcess = null
+let ytProcess = null
 
-const watermarkPath = path.join(__dirname, '../watermark.png')
 const logoPath = path.join(__dirname, '../logo.png')
 const rtmpsUrl = process.env.RTMPS_URL
 
 exports.startStream = (req, res, next) => {
   const videoUrl = req.videoUrl
-  const startTime = req.startTime //добавляем время начала видео
-  console.log('startTime:', startTime)
+  const startTime = req.startTime // Время начала видео
 
   if (!videoUrl) {
-    return res.status(400).send('❗ Укажите после ?url= ссылку на видео')
+    return res.status(400).send('❗ Укажите ссылку на видео')
   }
-  if (streamProcess) {
+  if (getStreamProcess()) {
     return res.send('❗ Трансляция уже запущена')
   }
-
   console.log(`🔗 Получение видео: ${videoUrl}`)
 
-  //* получение доступных форматов видео перед загрузкой
-  //* можно добавить стрим картинки перед или вместо видео
-  //* добавление watermark снизу код - снизу код
-
-  // Запускаем поток yt-dlp и передаем его в ffmpeg
+  // Запускаем процесс yt-dlp для загрузки видео
   ytProcess = startYtDlpProcess(videoUrl, startTime)
-
+  setYtProcess(ytProcess)
+  // Обработка событий yt-dlp
   ytProcess.on('exit', (code, signal) => {
-    console.log(`❌ yt-dlp: exit`)
-    //Срабатывает при заверешнии и остановке процесса
+    console.log(`❌ yt-dlp: exit с кодом ${code} и сигналом ${signal}`)
+    setYtProcess(null)
   })
-  ytProcess.on('close', (code, signal) => {
-    console.log(`🆗 yt-dlp: close`)
-    //Срабатывает при заверешнии процесса
-  })
-  //*  ytProcess.stdout.once запускается один раз
-  ytProcess.stdout.once('data', (data) => {
-    console.log('✅ Загрузка видео...')
-  })
-  streamLogoProcess = ffmpeg()
-    .input(logoPath)
-    .inputOptions(['-loop 1']) // Зацикливаем картинку
-    .outputOptions(ffmpegConfig)
-    .output(rtmpsUrl)
-    .on('start', () => {
-      console.log('✅ Стрим картинки запущен')
-    })
-    .on('error', (err) => {
-      console.error('❌ Ошибка ffmpeg:', err.message)
-      streamProcess = null
-    })
-    .on('end', () => {
-      console.log('⏹️ Трансляция картинки завершена')
-      streamProcess = null
-    })
-    .on('stderr', (stderr) => {
-      console.log('stderr:', stderr) // Вывод stderr для отладки
-    })
-    .run()
 
+  ytProcess.on('close', (code, signal) => {
+    console.log(`🆗 yt-dlp: close с кодом ${code} и сигналом ${signal}`)
+  })
+
+  ytProcess.stdout.once('data', () => {
+    console.log('✅ Загрузка видео началась')
+  })
+
+  // Запускаем стрим с картинкой
+  // streamLogoProcess = ffmpeg()
+  //   .input(logoPath)
+  //   .inputOptions(['-loop 1', '-re']) // Зацикливаем картинку
+  //   .outputOptions(ffmpegConfig)
+  //   .output(rtmpsUrl)
+  //   .on('start', () => {
+  //     console.log('✅ Стрим картинки запущен')
+  //     res.send('✅ Стрим картинки запущен')
+  //   })
+  //   .on('error', (err) => {
+  //     console.error('❌ ffmpeg:', err.message)
+  //   })
+  //   .on('end', () => {
+  //     console.log('⏹️ Трансляция картинки завершена')
+  //   })
+  //   .on('stderr', (stderr) => {
+  //     console.log('stderr:', stderr) // Вывод stderr для отладки
+  //   })
+  //   .run()
+
+  // Когда данные для видео начинают поступать, переключаемся на стрим с видео
+  // ytProcess.stdout.once('data', () => {
+  //   console.log('✅ Загрузка видео началась, переключаемся на стрим с видео')
+  // Останавливаем стрим с картинкой
+  //   if (streamLogoProcess) {
+  //     streamLogoProcess.kill('SIGKILL') // Мягкое завершение
+
+  //   }
+
+  // Запускаем стрим с видео после завершения стрима картинки
   streamProcess = ffmpeg(ytProcess.stdout)
     .inputOptions('-re')
     .outputOptions(ffmpegConfig)
@@ -82,23 +85,16 @@ exports.startStream = (req, res, next) => {
     })
     .on('error', (err) => {
       console.error('❌ ffmpeg:', err.message)
-      streamProcess = null
-      ytProcess = null
+      setStreamProcess(null)
     })
     .on('end', () => {
       console.log('🆗 Трансляция завершена')
-      streamProcess = null
-      ytProcess = null
+      setStreamProcess(null)
     })
-    // .on('stderr', (stderr) => {
-    //   console.log('stderr:', stderr) // Статистика трансляции
-    // })
     .once('progress', (progress) => {
       console.log('✅ Трансляция началась')
-      streamLogoProcess.kill('SIGINT')
     })
     .run()
 
-  setYtProcess(ytProcess)
   setStreamProcess(streamProcess)
 }
