@@ -9,11 +9,13 @@ const {
   getYtProcess,
 } = require('../utils/processManager')
 
+const { rtmpsUrl } = require('../utils/readJSON')
+
 let streamProcess = null
 let ytProcess = null
-
+console.log('rtmpsUrl:', rtmpsUrl)
 const logoPath = path.join(__dirname, '../logo.png')
-const rtmpsUrl = process.env.RTMPS_URL
+// const rtmpsUrl = process.env.RTMPS_URL
 
 exports.startStream = (req, res, next) => {
   const videoUrl = req.videoUrl

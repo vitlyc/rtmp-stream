@@ -1,7 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api')
 const fetch = require('node-fetch')
 const fs = require('fs')
-const path = 'userdata.json'
+const path = '../userdata.json'
 // Токен  бота
 const token = '7848450425:AAG1N4hrc7xHX9U-KQmq1tAPd915_43kdB0'
 
