@@ -4,8 +4,15 @@ const ytDlpConfig = require('../config/yt-dlpConfig')
 const startYtDlpProcess = (videoUrl, startTime) => {
   return spawn(
     'yt-dlp',
-    [...ytDlpConfig, videoUrl],
-    // [...ytDlpConfig, videoUrl, `--download-sections *${startTime}-inf`],
+    // [...ytDlpConfig, videoUrl],
+    [
+      ...ytDlpConfig,
+      videoUrl,
+      '--external-downloader',
+      'ffmpeg',
+      '--external-downloader-args',
+      `ffmpeg_i:-ss ${startTime}`,
+    ],
 
     {
       stdio: ['ignore', 'pipe', 'ignore'], // Передаем поток в ffmpeg
