@@ -8,14 +8,14 @@ function readJSON(filePath) {
     const data = fs.readFileSync(absolutePath, 'utf8')
     return JSON.parse(data)
   } catch (error) {
-    console.error('Ошибка при чтении файла userdata.json:', error.message)
+    console.error('Ошибка при чтении userdata.json:', error.message)
     return null
   }
 }
 
 const userDataPath = '../userdata.json'
 
-const userData = readJSON(userDataPath)
+const userData = readJSON(userDataPath) || null
 
 const rtmpsUrl = userData.serverUrl + userData.streamKey
 console.log('rtmpsUrl:', rtmpsUrl)

@@ -76,7 +76,7 @@ bot.on('message', (msg) => {
   const chatId = msg.chat.id
   const text = msg.text.trim()
 
-  if (/https?:\/\/youtu/.test(text)) {
+  if (/https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)/.test(text)) {
     return startStream(text, chatId)
   }
 

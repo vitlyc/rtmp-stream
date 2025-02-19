@@ -7,5 +7,7 @@ module.exports = [
   '--buffer-size',
   '16M',
   '--print-json', // Добавляем параметр для вывода сведений о видео в формате JSON
+  '--fixup',
+  'warn', // или 'detect_or_warn'
 ]
 //
