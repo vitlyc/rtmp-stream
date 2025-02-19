@@ -8,7 +8,7 @@ const token = '7848450425:AAG1N4hrc7xHX9U-KQmq1tAPd915_43kdB0'
 const bot = new TelegramBot(token, { polling: true })
 const PORT = 3000
 const URL = `http://localhost:${PORT}`
-
+const MY_ID = 125897751
 //Меню команд для бота
 const commands = [
   {
@@ -27,6 +27,9 @@ const userData = {}
 // Команда /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id
+
+  if (msg.from.id != MY_ID) return
+
   bot
     .sendMessage(chatId, 'Привет! Давайте настроим потоковую трансляцию.')
     .then(() => {
