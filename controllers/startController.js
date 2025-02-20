@@ -6,7 +6,6 @@ const {
   setStreamProcess,
   setYtProcess,
   getStreamProcess,
-  getYtProcess,
 } = require('../utils/processManager')
 
 const { rtmpsUrl } = require('../utils/readJSON')

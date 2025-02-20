@@ -6,6 +6,6 @@ module.exports = [
   '--no-part',
   '--buffer-size',
   '16M',
-  '--print-json', // Добавляем параметр для вывода сведений о видео в формате JSON
+  '--print-json',
 ]
 //
