@@ -22,13 +22,8 @@ const startYtDlpProcess = (videoUrl, startTime) => {
 
 const stopYtDlpProcess = (ytProcess) => {
   console.log('stopYtDlpProcess')
-  exec(`taskkill /IM yt-dlp.exe /T /F`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Ошибка: ${error.message}`)
-      return
-    }
-    console.log(`❌ yt-dlp: Все процессы остановлены`)
-  })
+  ytProcess.kill('SIGTERM')
+  console.log(`❌ yt-dlp: Процесс ${ytProcess.pid} остановлен`)
 }
 
 module.exports = { startYtDlpProcess, stopYtDlpProcess }

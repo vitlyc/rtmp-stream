@@ -27,6 +27,7 @@ const userData = {}
 // Команда /start
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id
+  console.log(msg)
 
   if (msg.from.id != MY_ID) return
 
