@@ -2,21 +2,24 @@ module.exports = [
   '-maxrate 8000k',
   '-bufsize',
   '16000k',
-  '-f flv',
-  '-c:v libx264',
-  '-preset veryfast',
-  '-tune zerolatency',
-  '-c:a aac',
-  '-ar 44100',
-  '-b:a 128k',
-  '-ac 2',
-  '-profile:v baseline',
-  '-pix_fmt yuv420p',
-  '-threads 0',
-  '-preset ultrafast',
-  '-flush_packets',
-  '1',
-  '-fflags +discardcorrupt',
+  '-c:v',
+  'libx264', // Видеокодек
+  '-c:a',
+  'aac', // Аудиокодек
+  '-b:v',
+  '8000k', // Битрейт видео
+  '-b:a',
+  '128k', // Битрейт аудио
+  '-s',
+  '1920x1080', // Разрешение
+  '-pix_fmt',
+  'yuv420p', // Формат пикселей
+  '-f',
+  'flv', // Формат вывода
+  '-preset',
+  'veryfast', // Настройка скорости кодирования
+  '-tune',
+  'zerolatency', // Минимизация задержек
 ]
 
 // module.exports = [

@@ -40,6 +40,7 @@ exports.startStream = (req, res, next) => {
 
   ytProcess.on('close', (code, signal) => {
     console.log(`🆗 yt-dlp: close с кодом ${code} и сигналом ${signal}`)
+    setYtProcess(null)
   })
 
   ytProcess.stdout.once('data', () => {
@@ -88,10 +89,12 @@ exports.startStream = (req, res, next) => {
     .on('error', (err) => {
       console.error('❌ ffmpeg:', err.message)
       setStreamProcess(null)
+      setYtProcess(null) // Останавливаем yt-dlp, если ffmpeg завершился с ошибкой
     })
     .on('end', () => {
       console.log('🆗 Трансляция завершена')
       setStreamProcess(null)
+      setYtProcess(null) // Останавливаем yt-dlp, если ffmpeg завершился с ошибкой
     })
     .once('progress', (progress) => {
       console.log('✅ Трансляция началась')
