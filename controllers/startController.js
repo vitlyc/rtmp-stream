@@ -11,9 +11,6 @@ const {
 
 const { rtmpsUrl } = require('../utils/readJSON')
 
-let streamProcess = null
-let ytProcess = null
-
 const logoPath = path.join(__dirname, '../logo.png')
 // const rtmpsUrl = process.env.RTMPS_URL
 
