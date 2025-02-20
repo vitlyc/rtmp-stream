@@ -1,6 +1,7 @@
 module.exports = [
   '-maxrate 8000k',
-  '-bufsize 12000k',
+  '-bufsize',
+  '16000k',
   '-f flv',
   '-c:v libx264',
   '-preset veryfast',
@@ -13,6 +14,9 @@ module.exports = [
   '-pix_fmt yuv420p',
   '-threads 0',
   '-preset ultrafast',
+  '-flush_packets',
+  '1',
+  '-fflags +discardcorrupt',
 ]
 
 // module.exports = [

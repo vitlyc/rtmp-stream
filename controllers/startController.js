@@ -54,7 +54,7 @@ exports.startStream = (req, res, next) => {
   //   .output(rtmpsUrl)
   //   .on('start', () => {
   //     console.log('✅ Стрим картинки запущен')
-  //     res.send('✅ Стрим картинки запущен')
+  //
   //   })
   //   .on('error', (err) => {
   //     console.error('❌ ffmpeg:', err.message)
@@ -78,7 +78,7 @@ exports.startStream = (req, res, next) => {
 
   // Запускаем стрим с видео после завершения стрима картинки
   streamProcess = ffmpeg(ytProcess.stdout)
-    .inputOptions(['-re', '-fflags +discardcorrupt'])
+    .inputOptions(['-re'])
     .outputOptions(ffmpegConfig)
     .output(rtmpsUrl)
     .on('start', () => {
