@@ -10,7 +10,7 @@ const {
 
 const { rtmpsUrl } = require('../utils/readJSON')
 
-const logoPath = path.join(__dirname, '../logo.png')
+const logoPath = path.join(__dirname, '../disney.png')
 // const rtmpsUrl = process.env.RTMPS_URL
 
 exports.startStream = (req, res, next) => {
@@ -25,10 +25,10 @@ exports.startStream = (req, res, next) => {
   }
   console.log(`🔗 Получение видео: ${videoUrl}`)
 
-  // Запускаем процесс yt-dlp для загрузки видео
+
   ytProcess = startYtDlpProcess(videoUrl, startTime)
   setYtProcess(ytProcess)
-  // Обработка событий yt-dlp
+
   ytProcess.on('exit', (code, signal) => {
     console.log(`❌ yt-dlp: exit с кодом ${code} и сигналом ${signal}`)
     setYtProcess(null)
@@ -39,14 +39,15 @@ exports.startStream = (req, res, next) => {
     setYtProcess(null)
   })
 
-  ytProcess.stdout.once('data', () => {
+  ytProcess.stdout.once('data', (data) => {
     console.log('✅ Загрузка видео началась')
+    console.log(data)
   })
 
-  // Запускаем стрим с картинкой
+
   // streamLogoProcess = ffmpeg()
   //   .input(logoPath)
-  //   .inputOptions(['-loop 1', '-re']) // Зацикливаем картинку
+  //   .inputOptions(['-loop 1', '-re']) 
   //   .outputOptions(ffmpegConfig)
   //   .output(rtmpsUrl)
   //   .on('start', () => {
@@ -60,20 +61,19 @@ exports.startStream = (req, res, next) => {
   //     console.log('⏹️ Трансляция картинки завершена')
   //   })
   //   .on('stderr', (stderr) => {
-  //     console.log('stderr:', stderr) // Вывод stderr для отладки
+  //     console.log('stderr:', stderr) 
   //   })
   //   .run()
 
-  // Когда данные для видео начинают поступать, переключаемся на стрим с видео
+ 
   // ytProcess.stdout.once('data', () => {
-  //   console.log('✅ Загрузка видео началась, переключаемся на стрим с видео')
-  // Останавливаем стрим с картинкой
+  //   console.log('✅ Загрузка видео началась, 
   //   if (streamLogoProcess) {
-  //     streamLogoProcess.kill('SIGKILL') // Мягкое завершение
+  //     streamLogoProcess.kill('SIGKILL') 
 
   //   }
 
-  // Запускаем стрим с видео после завершения стрима картинки
+
   streamProcess = ffmpeg(ytProcess.stdout)
     .inputOptions(['-re'])
     .outputOptions(ffmpegConfig)

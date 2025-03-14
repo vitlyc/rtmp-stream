@@ -18,7 +18,8 @@ exports.stopStream = (req, res, next) => {
   streamProcess.kill('SIGINT')
   setStreamProcess(null)
 
-  stopYtDlpProcess()
+  stopYtDlpProcess(ytProcess)
+  // ytProcess.kill('SIGINT')
   setYtProcess(null)
 
   console.log('⏹️ Трансляция остановлена')

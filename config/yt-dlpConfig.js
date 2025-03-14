@@ -1,6 +1,6 @@
 module.exports = [
   '-f',
-  'bestvideo[height<=1080]+bestaudio/best[height<=1080]',
+  'bestvideo[height<=720]+bestaudio/best[height<=720]',
   '-o',
   '-',
   '--no-part',
